@@ -1,0 +1,9 @@
+{
+  "cmd": "/screen",
+  "time": "2026-06-26T23:31:13.016675",
+  "output": "✅ Screenshot taken",
+  "media": {
+    "type": "image",
+    "url": "https://raw.githubusercontent.com/chotkof/badguy/main/outputs/images/screenshot_20260626_233110.png"
+  }
+}
