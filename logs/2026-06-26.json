@@ -23,5 +23,10 @@
     "time": "17:13:42",
     "text": "\ud83d\udcca Status requested",
     "type": "info"
+  },
+  {
+    "time": "17:22:11",
+    "text": "Loaded GIFs: 5",
+    "type": "info"
   }
 ]
