@@ -1,0 +1,16 @@
+{
+  "status": "online",
+  "pc_name": "CHOTKO",
+  "username": "Admin",
+  "local_ip": "172.17.0.1",
+  "public_ip": "Undefined",
+  "started": "2026-06-25T19:37:02.068816",
+  "chaosActive": false,
+  "windowCount": 0,
+  "mode": "LOCAL",
+  "uptime": 1782405422,
+  "aeroInstalled": false,
+  "autoAccept": false,
+  "defenderLaunched": true,
+  "lastUpdate": "2026-06-25T19:37:02.081886"
+}
