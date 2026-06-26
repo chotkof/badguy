@@ -50,8 +50,8 @@
     "type": "info"
   },
   {
-    "time": "23:39:06",
-    "text": "\u26a0\ufe0f Invalid JSON in command.json: Expecting value: line 2 column 1 (char 1)",
-    "type": "error"
+    "time": "23:39:18",
+    "text": "Loaded GIFs: 5",
+    "type": "info"
   }
 ]
