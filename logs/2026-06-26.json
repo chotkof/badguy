@@ -50,8 +50,8 @@
     "type": "info"
   },
   {
-    "time": "23:39:32",
-    "text": "\ud83d\udce4 Media upload: ENABLED (GitHub)",
-    "type": "info"
+    "time": "23:39:37",
+    "text": "\u26a0\ufe0f Invalid JSON in command.json: Expecting value: line 2 column 1 (char 1)",
+    "type": "error"
   }
 ]
