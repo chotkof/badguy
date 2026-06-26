@@ -2,5 +2,9 @@
   {
     "id": "1",
     "cmd": "/status"
+  },
+  {
+    "id": "1",
+    "cmd": "/screen"
   }
 ]
