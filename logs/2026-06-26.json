@@ -28,5 +28,10 @@
     "time": "17:22:33",
     "text": "\u2705 Photo taken!",
     "type": "success"
+  },
+  {
+    "time": "17:27:28",
+    "text": "\ud83d\udce9 Command: /aero",
+    "type": "command"
   }
 ]
