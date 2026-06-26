@@ -25,8 +25,8 @@
     "type": "info"
   },
   {
-    "time": "17:22:27",
-    "text": "\ud83d\udcf7 Taking photo from webcam...",
-    "type": "info"
+    "time": "17:22:33",
+    "text": "\u2705 Photo taken!",
+    "type": "success"
   }
 ]
