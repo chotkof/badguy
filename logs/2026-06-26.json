@@ -38,5 +38,10 @@
     "time": "17:43:54",
     "text": "\ud83d\udce1 AEROADMIN CONNECTION DATA\nPC: CHOTKO\nUser: Admin\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nDownload: https://aeroadmin.ru\n\nTO CONNECT:\nID: 961960210\nPIN: 6437\n",
     "type": "info"
+  },
+  {
+    "time": "17:53:39",
+    "text": "\ud83d\udce9 Command: /screen",
+    "type": "command"
   }
 ]
