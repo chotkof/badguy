@@ -40,8 +40,8 @@
     "type": "info"
   },
   {
-    "time": "17:53:40",
-    "text": "\ud83d\udcf8 Taking screenshot...",
-    "type": "info"
+    "time": "17:53:44",
+    "text": "\u2705 Screenshot taken",
+    "type": "success"
   }
 ]
