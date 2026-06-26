@@ -1,7 +1,12 @@
 [
   {
-    "time": "16:01:22",
-    "text": "\ud83d\udce1 Mode: GITHUB",
+    "time": "16:01:17",
+    "text": "Loaded GIFs: 5",
+    "type": "info"
+  },
+  {
+    "time": "16:01:23",
+    "text": "\ud83d\udce1 Repository: chotkof/badguy",
     "type": "info"
   }
 ]
