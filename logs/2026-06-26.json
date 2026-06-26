@@ -20,8 +20,8 @@
     "type": "command"
   },
   {
-    "time": "17:13:32",
-    "text": "\ud83d\udce1 Reading commands from: command.json",
+    "time": "17:13:33",
+    "text": "\u2328\ufe0f \"chotko\" - emergency shutdown",
     "type": "info"
   }
 ]
