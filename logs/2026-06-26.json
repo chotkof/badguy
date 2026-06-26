@@ -55,8 +55,8 @@
     "type": "error"
   },
   {
-    "time": "23:41:08",
-    "text": "\ud83d\udcf7 Taking photo from webcam...",
-    "type": "info"
+    "time": "23:41:13",
+    "text": "\u2705 Photo taken!",
+    "type": "success"
   }
 ]
