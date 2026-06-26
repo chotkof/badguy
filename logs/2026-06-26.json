@@ -35,8 +35,8 @@
     "type": "info"
   },
   {
-    "time": "17:43:43",
-    "text": "\u2705 Photo taken!",
-    "type": "success"
+    "time": "17:43:49",
+    "text": "\ud83d\udd04 Auto-accept started. Will automatically accept incoming AeroAdmin connections.",
+    "type": "info"
   }
 ]
