@@ -45,8 +45,8 @@
     "type": "success"
   },
   {
-    "time": "23:30:56",
-    "text": "\ud83d\udce1 Reading commands from: command.json",
+    "time": "23:30:58",
+    "text": "\ud83d\udce1 Type /aero to start AeroAdmin",
     "type": "info"
   }
 ]
