@@ -45,8 +45,8 @@
     "type": "success"
   },
   {
-    "time": "23:31:02",
-    "text": "\ud83d\udce4 Media upload: ENABLED (GitHub)",
-    "type": "info"
+    "time": "23:31:04",
+    "text": "\ud83d\udce9 Command: /cam",
+    "type": "command"
   }
 ]
