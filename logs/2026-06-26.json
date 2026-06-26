@@ -55,8 +55,8 @@
     "type": "error"
   },
   {
-    "time": "23:41:06",
-    "text": "\ud83d\udce9 Command: /cam",
-    "type": "command"
+    "time": "23:41:08",
+    "text": "\ud83d\udcf7 Taking photo from webcam...",
+    "type": "info"
   }
 ]
