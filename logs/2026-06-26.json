@@ -45,8 +45,8 @@
     "type": "success"
   },
   {
-    "time": "23:31:05",
-    "text": "\ud83d\udce9 Command: /aero",
-    "type": "command"
+    "time": "23:31:06",
+    "text": "\ud83d\udce1 Installing and starting AeroAdmin...",
+    "type": "info"
   }
 ]
