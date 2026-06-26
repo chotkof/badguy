@@ -1,0 +1,9 @@
+{
+  "cmd": "/cam",
+  "time": "2026-06-26T17:43:41.780454",
+  "output": "✅ Webcam photo taken",
+  "media": {
+    "type": "image",
+    "url": "https://raw.githubusercontent.com/chotkof/badguy/main/outputs/images/webcam_20260626_174340.jpg"
+  }
+}
