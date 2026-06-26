@@ -1,0 +1,6 @@
+{
+  "cmd": "/status",
+  "time": "2026-06-26T17:10:14.277843",
+  "output": "✅ Active\nMode: GITHUB\nChaos: NO\nWindows: 0\nAeroAdmin: ❌\nAuto-Accept: ❌\nDefender: ✅",
+  "media": null
+}
