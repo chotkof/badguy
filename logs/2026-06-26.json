@@ -58,5 +58,10 @@
     "time": "23:41:13",
     "text": "\u2705 Photo taken!",
     "type": "success"
+  },
+  {
+    "time": "23:50:05",
+    "text": "Loaded GIFs: 5",
+    "type": "info"
   }
 ]
