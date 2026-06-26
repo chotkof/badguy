@@ -1,7 +1,12 @@
 [
   {
-    "time": "16:01:24",
-    "text": "\ud83d\udce1 Reading commands from: command.json",
+    "time": "16:01:17",
+    "text": "Loaded GIFs: 5",
+    "type": "info"
+  },
+  {
+    "time": "16:01:26",
+    "text": "\u2328\ufe0f \"chotko\" - emergency shutdown",
     "type": "info"
   }
 ]
