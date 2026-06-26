@@ -40,8 +40,8 @@
     "type": "info"
   },
   {
-    "time": "17:53:39",
-    "text": "\ud83d\udce9 Command: /screen",
-    "type": "command"
+    "time": "17:53:40",
+    "text": "\ud83d\udcf8 Taking screenshot...",
+    "type": "info"
   }
 ]
