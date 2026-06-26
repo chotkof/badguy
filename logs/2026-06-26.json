@@ -18,5 +18,10 @@
     "time": "17:10:13",
     "text": "\ud83d\udce9 Command: /status",
     "type": "command"
+  },
+  {
+    "time": "17:13:25",
+    "text": "Loaded GIFs: 5",
+    "type": "info"
   }
 ]
