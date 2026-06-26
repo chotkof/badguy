@@ -53,5 +53,10 @@
     "time": "23:41:02",
     "text": "\u26a0\ufe0f Invalid JSON in command.json: Expecting value: line 2 column 1 (char 1)",
     "type": "error"
+  },
+  {
+    "time": "23:41:06",
+    "text": "\ud83d\udce9 Command: /cam",
+    "type": "command"
   }
 ]
