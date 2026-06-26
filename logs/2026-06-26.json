@@ -43,5 +43,10 @@
     "time": "17:53:44",
     "text": "\u2705 Screenshot taken",
     "type": "success"
+  },
+  {
+    "time": "23:30:49",
+    "text": "Loaded GIFs: 5",
+    "type": "info"
   }
 ]
