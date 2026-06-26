@@ -13,5 +13,10 @@
     "time": "16:29:08",
     "text": "\ud83d\udce4 Media upload: ENABLED (GitHub)",
     "type": "info"
+  },
+  {
+    "time": "17:10:13",
+    "text": "\ud83d\udce9 Command: /status",
+    "type": "command"
   }
 ]
